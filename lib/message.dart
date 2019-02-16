@@ -23,7 +23,7 @@ class MessageItem extends StatelessWidget {
       return ListTile(
           onLongPress: () => onDeleteMessage(message),
           trailing: CircleAvatar(
-              backgroundColor: Colors.blue[200], child: Text(message.text[0])),
+              backgroundColor: Colors.red, child: Text(message.text[0])),
           title: Container(
             constraints: BoxConstraints(minHeight: 20.0),
             padding: EdgeInsets.all(15.0),
@@ -42,7 +42,7 @@ class MessageItem extends StatelessWidget {
     return ListTile(
         onLongPress: () => onDeleteMessage(message),
         leading: CircleAvatar(
-            backgroundColor: Colors.blue[200], child: Text(message.text[0])),
+            backgroundColor: Colors.red, child: Text(message.text[0])),
         title: Container(
           alignment: Alignment.bottomLeft,
           constraints: BoxConstraints(minHeight: 20.0),
@@ -55,7 +55,7 @@ class MessageItem extends StatelessWidget {
                     offset: Offset(2.0, 1.0),
                     blurRadius: 1.0),
               ],
-              color: Colors.grey[300],
+              color: Colors.green,
               borderRadius: BorderRadius.circular(12.0)),
         ));
   }
@@ -103,6 +103,14 @@ class _MessageListState extends State<MessageList> {
         resizeToAvoidBottomPadding: false,
         appBar: AppBar(
           backgroundColor: Color.fromRGBO(66, 155, 154, 1.0),
+          leading: Hero(
+            tag: 'hero',
+            child: CircleAvatar(
+              backgroundColor: Colors.transparent,
+              radius: 15.0,
+              child: Image.asset('assets/logo.png'),
+            ),
+          ),
           title: Text('Super cool messenger'),
         ),
         body: Transform.translate(
