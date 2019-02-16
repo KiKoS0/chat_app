@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:chat_app/sendwidget.dart';
+import 'package:chat_app/widgets/sendwidget.dart';
 
 class Message {
   const Message({this.text, this.isMine});

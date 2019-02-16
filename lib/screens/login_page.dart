@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:chat_app/main.dart';
+import 'package:chat_app/screens/other_screen.dart';
 
 class LoginPage extends StatefulWidget {
   static String tag = 'login-page';

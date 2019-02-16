@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:chat_app/message.dart';
+import 'package:chat_app/widgets/message.dart';
 
 class MessageSendBox extends StatefulWidget {
   _MessageSendBox createState() => new _MessageSendBox();

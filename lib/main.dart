@@ -1,24 +1,16 @@
 import 'package:flutter/material.dart';
 // import 'package:chat_app/MyCoolButton.dart';
 // import 'package:chat_app/counter.dart';
-import 'package:chat_app/message.dart';
+import 'package:chat_app/widgets/message.dart';
 import 'package:flutter/rendering.dart';
-import 'package:chat_app/login_page.dart';
+import 'package:chat_app/screens/login_page.dart';
+import 'package:chat_app/screens/other_screen.dart';
 
 void main() {
   //debugPaintSizeEnabled = true;
   runApp(MyApp());
 }
 
-class OtherScreen extends StatelessWidget {
-  static String tag = 'other-page';
-  @override
-  Widget build(BuildContext context) {
-  return MessageList(
-        messages: <Message>[],
-      );
-  }
-}
 
 class MyApp extends StatelessWidget {
   final routes = <String, WidgetBuilder>{
