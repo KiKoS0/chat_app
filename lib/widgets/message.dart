@@ -23,7 +23,7 @@ class MessageItem extends StatelessWidget {
       return ListTile(
           onLongPress: () => onDeleteMessage(message),
           trailing: CircleAvatar(
-              backgroundColor: Colors.red, child: Text(message.text[0])),
+              backgroundColor: Colors.blue, child: Text(message.text[0])),
           title: Container(
             constraints: BoxConstraints(minHeight: 20.0),
             padding: EdgeInsets.all(15.0),
@@ -42,7 +42,7 @@ class MessageItem extends StatelessWidget {
     return ListTile(
         onLongPress: () => onDeleteMessage(message),
         leading: CircleAvatar(
-            backgroundColor: Colors.red, child: Text(message.text[0])),
+            backgroundColor: Colors.blue, child: Text(message.text[0])),
         title: Container(
           alignment: Alignment.bottomLeft,
           constraints: BoxConstraints(minHeight: 20.0),
@@ -55,7 +55,7 @@ class MessageItem extends StatelessWidget {
                     offset: Offset(2.0, 1.0),
                     blurRadius: 1.0),
               ],
-              color: Colors.green,
+              color: Colors.grey[300],
               borderRadius: BorderRadius.circular(12.0)),
         ));
   }
@@ -84,6 +84,9 @@ class _MessageListState extends State<MessageList> {
       widget.messages.add(message);
     });
   }
+  void _handleMessagesClearAll(){
+    widget.messages.clear();
+  }
 
   void _scrollListToBottom() {
     setState(() {
@@ -97,7 +100,7 @@ class _MessageListState extends State<MessageList> {
 
   @override
   Widget build(BuildContext context) {
-    print('rebuild');
+    print('rebuilding messagelist state');
     // TODO: implement build
     return Scaffold(
         resizeToAvoidBottomPadding: false,
@@ -133,6 +136,7 @@ class _MessageListState extends State<MessageList> {
                 child: MessageSendBox(
                   addMessageCallback: _handleMessageAdd,
                   scrollListCallback: _scrollListToBottom,
+                  clearMessagesCallback: _handleMessagesClearAll,
                 ),
               ),
             )));

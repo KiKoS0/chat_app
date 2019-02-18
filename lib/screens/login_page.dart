@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:chat_app/main.dart';
 import 'package:chat_app/screens/other_screen.dart';
+import 'package:chat_app/core/network.dart';
+import 'package:http/http.dart' as http;
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+
 
 class LoginPage extends StatefulWidget {
   static String tag = 'login-page';
@@ -9,6 +15,10 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+
+  final usernameController = TextEditingController(text:'testflutter@yahoo.fr');
+  final passwordController = TextEditingController(text: 'Abc!123');
+
   @override
   Widget build(BuildContext context) {
     final logo = Hero(
@@ -23,7 +33,7 @@ class _LoginPageState extends State<LoginPage> {
     final email = TextFormField(
       keyboardType: TextInputType.emailAddress,
       autofocus: false,
-      initialValue: 'alucard@gmail.com',
+      controller: usernameController,
       decoration: InputDecoration(
         hintText: 'Email',
         contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
@@ -33,8 +43,8 @@ class _LoginPageState extends State<LoginPage> {
 
     final password = TextFormField(
       autofocus: false,
-      initialValue: 'some password',
       obscureText: true,
+      controller: passwordController,
       decoration: InputDecoration(
         hintText: 'Password',
         contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
@@ -49,7 +59,37 @@ class _LoginPageState extends State<LoginPage> {
           borderRadius: BorderRadius.circular(24),
         ),
         onPressed: () {
-           Navigator.of(context).pushNamed(OtherScreen.tag);
+          //  Navigator.of(context).pushNamed(OtherScreen.tag);
+          Future<http.Response> fetchPost() async{
+            // Map cred = {
+            //   'email' : 'testflutter@yahoo.fr',
+            //   'password' : 'Abc!123'
+            // };
+            // final rep = await http.post('http://192.168.1.22:8080/account/register',
+            //                   headers: {HttpHeaders.contentTypeHeader: "application/json",},
+            //                   body: json.encode(cred));
+            final c = AuthenticationModel(username: usernameController.text,
+                          password: passwordController.text);
+            // final login = await http.post('http://192.168.1.22:8080/account/login',
+            //                   headers: {HttpHeaders.contentTypeHeader: "application/json",},
+            //                   body: json.encode(c.toJsonEncodable()));
+            // print(login.statusCode);
+            // final cookie = login.headers[HttpHeaders.setCookieHeader].split(';')[0];
+            // print(cookie);
+            // final res = await http.get('http://192.168.1.22:8080/api/protected',
+            //             headers: {HttpHeaders.cookieHeader: cookie});
+            // print(res.statusCode);
+            // print(res.body);
+            final net = NetHandler();
+            await net.authenticate(c);
+            await net.isAuthenticated().then((value) {
+              print(value ? "Connected" : "Not Connected");
+              if(value){
+                Navigator.of(context).pushNamed(OtherScreen.tag);
+              }
+            });
+          }
+          fetchPost();
         },
         padding: EdgeInsets.all(12),
         color: Colors.lightBlueAccent,

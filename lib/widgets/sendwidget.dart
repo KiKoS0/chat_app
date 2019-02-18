@@ -1,3 +1,4 @@
+import 'package:chat_app/core/network.dart';
 import 'package:flutter/material.dart';
 import 'package:chat_app/widgets/message.dart';
 
@@ -5,7 +6,8 @@ class MessageSendBox extends StatefulWidget {
   _MessageSendBox createState() => new _MessageSendBox();
   final MessageHandlingCallback addMessageCallback;
   final VoidCallback scrollListCallback;
-  MessageSendBox({this.addMessageCallback, this.scrollListCallback});
+  final VoidCallback clearMessagesCallback;
+  MessageSendBox({this.addMessageCallback, this.scrollListCallback,this.clearMessagesCallback});
 }
 
 class _MessageSendBox extends State<MessageSendBox> {
@@ -25,13 +27,19 @@ class _MessageSendBox extends State<MessageSendBox> {
   }
 
   bool _alternate = true;
-  void _sendMessage() {
+  void _sendMessage() async{
     setState(() {
-      widget.addMessageCallback(
-          Message(text: myController.text, isMine: _alternate));
+      NetHandler handler= NetHandler();
+      handler.sendMessage(myController.text).then((value){
+        print(value ? "Message sent" : "Message sent");
+      });
+      handler.getMessages().then((List l) =>
+        l.forEach((m) => widget.addMessageCallback(m)));
+      // widget.addMessageCallback(
+      //     Message(text: myController.text, isMine: _alternate));
       widget.scrollListCallback();
       myController.text = "";
-      _alternate = !_alternate;
+      // _alternate = !_alternate;
     });
   }
 
