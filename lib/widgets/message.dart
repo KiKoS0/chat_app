@@ -105,7 +105,7 @@ class _MessageListState extends State<MessageList> {
     return Scaffold(
         resizeToAvoidBottomPadding: false,
         appBar: AppBar(
-          backgroundColor: Color.fromRGBO(66, 155, 154, 1.0),
+          backgroundColor: Colors.white,
           leading: Hero(
             tag: 'hero',
             child: CircleAvatar(
@@ -114,6 +114,9 @@ class _MessageListState extends State<MessageList> {
               child: Image.asset('assets/logo.png'),
             ),
           ),
+          actions: <Widget>[
+            IconButton(icon: Icon(Icons.menu) ,onPressed: null,)
+          ],
           title: Text('Super cool messenger'),
         ),
         body: Transform.translate(
@@ -155,3 +158,50 @@ class _SystemPadding extends StatelessWidget {
         child: child);
   }
 }
+
+//@override
+//   Widget build(BuildContext context) {
+//     print('rebuilding messagelist state');
+//     // TODO: implement build
+//     return Scaffold(
+//         resizeToAvoidBottomPadding: false,
+//         body: Column(
+//           children: <Widget>[
+//             TopHeader(
+//               icon: Icon(Icons.menu),
+//               title: Text(
+//                 "Someone",
+//                 style: TextStyle(
+//                     fontSize: 20.0,
+//                     color: Colors.black,
+//                     fontWeight: FontWeight.w400),
+//               ),
+//             ),
+//             Expanded(
+//               child: ListView(
+//                 controller: _controller,
+//                 padding: EdgeInsets.symmetric(vertical: 8.0),
+//                 children: widget.messages.map((Message message) {
+//                   return Container(
+//                       child: MessageItem(
+//                           message: message,
+//                           onDeleteMessage: _handleMessageDelete));
+//                 }).toList(),
+//               ),
+//             )
+//           ],
+//         ),
+//         bottomNavigationBar: Transform.translate(
+//             offset:
+//                 Offset(0.0, -0.0 * MediaQuery.of(context).viewInsets.bottom),
+//             child: _SystemPadding(
+//               child: BottomAppBar(
+//                 child: MessageSendBox(
+//                   addMessageCallback: _handleMessageAdd,
+//                   scrollListCallback: _scrollListToBottom,
+//                   clearMessagesCallback: _handleMessagesClearAll,
+//                 ),
+//               ),
+//             )));
+//   }
+// }

@@ -1,3 +1,4 @@
+import 'package:chat_app/screens/conversation_screen.dart';
 import 'package:flutter/material.dart';
 // import 'package:chat_app/MyCoolButton.dart';
 // import 'package:chat_app/counter.dart';
@@ -7,7 +8,7 @@ import 'package:chat_app/screens/login_page.dart';
 import 'package:chat_app/screens/other_screen.dart';
 
 void main() {
-  //debugPaintSizeEnabled = true;
+  // debugPaintSizeEnabled = true;
   runApp(MyApp());
 }
 
@@ -15,12 +16,13 @@ void main() {
 class MyApp extends StatelessWidget {
   final routes = <String, WidgetBuilder>{
     LoginPage.tag: (context) => LoginPage(),
-    OtherScreen.tag: (context) => OtherScreen()
+    OtherScreen.tag: (context) => OtherScreen(),
+    ConversationScreen.tag: (context) => ConversationScreen()
   };
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Kodeversitas',
+      title: 'KNetwork',
       //debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.lightBlue,

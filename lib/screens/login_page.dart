@@ -1,12 +1,12 @@
+import 'package:chat_app/screens/conversation_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:chat_app/main.dart';
 import 'package:chat_app/screens/other_screen.dart';
 import 'package:chat_app/core/network.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
-
+import 'dart:convert';
 
 class LoginPage extends StatefulWidget {
   static String tag = 'login-page';
@@ -15,8 +15,8 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-
-  final usernameController = TextEditingController(text:'testflutter@yahoo.fr');
+  final usernameController =
+      TextEditingController(text: 'testflutter@yahoo.fr');
   final passwordController = TextEditingController(text: 'Abc!123');
 
   @override
@@ -58,9 +58,9 @@ class _LoginPageState extends State<LoginPage> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(24),
         ),
-        onPressed: () {
+        onPressed: () async {
           //  Navigator.of(context).pushNamed(OtherScreen.tag);
-          Future<http.Response> fetchPost() async{
+          Future<http.Response> fetchPost() async {
             // Map cred = {
             //   'email' : 'testflutter@yahoo.fr',
             //   'password' : 'Abc!123'
@@ -68,8 +68,9 @@ class _LoginPageState extends State<LoginPage> {
             // final rep = await http.post('http://192.168.1.22:8080/account/register',
             //                   headers: {HttpHeaders.contentTypeHeader: "application/json",},
             //                   body: json.encode(cred));
-            final c = AuthenticationModel(username: usernameController.text,
-                          password: passwordController.text);
+            final c = AuthenticationModel(
+                username: usernameController.text,
+                password: passwordController.text);
             // final login = await http.post('http://192.168.1.22:8080/account/login',
             //                   headers: {HttpHeaders.contentTypeHeader: "application/json",},
             //                   body: json.encode(c.toJsonEncodable()));
@@ -84,12 +85,14 @@ class _LoginPageState extends State<LoginPage> {
             await net.authenticate(c);
             await net.isAuthenticated().then((value) {
               print(value ? "Connected" : "Not Connected");
-              if(value){
-                Navigator.of(context).pushNamed(OtherScreen.tag);
+              if (value) {
+                Navigator.of(context).pushNamed(ConversationScreen.tag);
               }
             });
           }
+
           fetchPost();
+
         },
         padding: EdgeInsets.all(12),
         color: Colors.lightBlueAccent,
@@ -110,14 +113,20 @@ class _LoginPageState extends State<LoginPage> {
       body: Center(
         child: ListView(
           shrinkWrap: true,
-          padding: EdgeInsets.only(left:24.0,right: 24.0),
+          padding: EdgeInsets.only(left: 24.0, right: 24.0),
           children: <Widget>[
             logo,
-            SizedBox(height: 48.0,),
+            SizedBox(
+              height: 48.0,
+            ),
             email,
-            SizedBox(height: 8.0,),
+            SizedBox(
+              height: 8.0,
+            ),
             password,
-            SizedBox(height: 24.0,),
+            SizedBox(
+              height: 24.0,
+            ),
             loginButton,
             forgotLabel
           ],

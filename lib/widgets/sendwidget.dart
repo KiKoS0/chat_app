@@ -33,6 +33,7 @@ class _MessageSendBox extends State<MessageSendBox> {
       handler.sendMessage(myController.text).then((value){
         print(value ? "Message sent" : "Message sent");
       });
+      widget.clearMessagesCallback();
       handler.getMessages().then((List l) =>
         l.forEach((m) => widget.addMessageCallback(m)));
       // widget.addMessageCallback(
