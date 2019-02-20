@@ -1,4 +1,5 @@
 import 'package:chat_app/models/conversation_models.dart';
+import 'package:chat_app/models/messages_models.dart';
 import 'package:chat_app/widgets/message.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
@@ -23,14 +24,22 @@ class NetHandler {
     return true;
   }
 
-  Future<bool> sendMessage(String message) async {
+  Future<bool> sendMessage(String message, Conversation conv) async {
     try {
-      Map data = {'conversationId': '1', 'text': message};
+      print("DEBUGGGG");
+      print(message);
+      print(conv.id);
+      Map data = {'ConversationId': conv.id.toString(), 'Text': message};
+      var a = json.encode(data);
+      print(a);
       final rep = await http.post('http://192.168.1.22:8080/message/send',
           headers: {
             HttpHeaders.contentTypeHeader: "application/json",
+            HttpHeaders.cookieHeader: apiCookieKey
           },
           body: json.encode(data));
+      print(rep.body);
+      print('message ' + rep.statusCode.toString());
       if (rep.statusCode == 200) {
         return true;
       }
@@ -38,25 +47,6 @@ class NetHandler {
       print(e.toString());
     }
     return false;
-  }
-
-  Future<List<Message>> getMessages() async {
-    try {
-      Map data = {'conversationId': '1'};
-      final rep = await http.post('http://192.168.1.22:8080/message/get',
-          headers: {
-            HttpHeaders.contentTypeHeader: "application/json",
-          },
-          body: json.encode(data));
-      final messages = json.decode(rep.body);
-      List ret = List<Message>();
-      for (var msg in messages['1']) {
-        ret.add(Message(text: msg['text'], isMine: true));
-      }
-      return ret;
-    } on Exception catch (e) {
-      print(e.toString());
-    }
   }
 
   Future<bool> isAuthenticated() async {
@@ -86,6 +76,24 @@ class NetHandler {
       return false;
     }
     return true;
+  }
+
+  Future<List<MessageModel>> getMessages(Conversation conversation) async {
+    try {
+      Map data = {'conversationId': conversation.id.toString()};
+      final rep = await http.post('http://192.168.1.22:8080/message/get',
+          headers: {
+            HttpHeaders.contentTypeHeader: "application/json",
+            HttpHeaders.cookieHeader: apiCookieKey
+          },
+          body: json.encode(data));
+      List<dynamic> decoded = json.decode(rep.body);
+      List<MessageModel> ret = List<MessageModel>.from(
+          decoded.map((hashMap) => MessageModel.fromJson(hashMap)));
+      return ret;
+    } on Exception catch (e) {
+      print(e.toString());
+    }
   }
 
   Future<List<ConversationModel>> getConversations() async {

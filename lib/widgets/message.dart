@@ -1,15 +1,14 @@
 import 'dart:async';
 
+import 'package:chat_app/models/conversation_models.dart';
+import 'package:chat_app/models/messages_models.dart';
 import 'package:flutter/material.dart';
 import 'package:chat_app/widgets/sendwidget.dart';
 
-class Message {
-  const Message({this.text, this.isMine});
-  final bool isMine;
-  final String text;
-}
+
 
 typedef void MessageHandlingCallback(Message message);
+typedef void MessageSetHandlingCallback(List<Message> messages);
 
 class MessageItem extends StatelessWidget {
   MessageItem({Message message, this.onDeleteMessage})
@@ -62,9 +61,10 @@ class MessageItem extends StatelessWidget {
 }
 
 class MessageList extends StatefulWidget {
-  MessageList({Key key, this.messages}) : super(key: key);
+  MessageList({Key key, this.messages,this.conversation}) : super(key: key);
 
   List<Message> messages;
+  final Conversation conversation;
 
   _MessageListState createState() => _MessageListState();
 }
@@ -75,6 +75,12 @@ class _MessageListState extends State<MessageList> {
   void _handleMessageDelete(Message message) {
     setState(() {
       widget.messages.remove(message);
+    });
+  }
+
+  void _handleGetAllMessages(List<Message> messages){
+    setState(() {
+      widget.messages = messages;
     });
   }
 
@@ -117,7 +123,7 @@ class _MessageListState extends State<MessageList> {
           actions: <Widget>[
             IconButton(icon: Icon(Icons.menu) ,onPressed: null,)
           ],
-          title: Text('Super cool messenger'),
+          title: Text(widget.conversation.others[0]),
         ),
         body: Transform.translate(
           offset: Offset(0.0, -0.0 * MediaQuery.of(context).viewInsets.bottom),
@@ -137,9 +143,11 @@ class _MessageListState extends State<MessageList> {
             child: _SystemPadding(
               child: BottomAppBar(
                 child: MessageSendBox(
+                  conversation: widget.conversation,
                   addMessageCallback: _handleMessageAdd,
                   scrollListCallback: _scrollListToBottom,
                   clearMessagesCallback: _handleMessagesClearAll,
+                  setAllMessagesCallback: _handleGetAllMessages,
                 ),
               ),
             )));
