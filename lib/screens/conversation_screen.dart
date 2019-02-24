@@ -1,9 +1,11 @@
 import 'package:chat_app/core/network.dart';
 import 'package:chat_app/models/conversation_models.dart';
+import 'package:chat_app/models/messaging_model.dart';
 import 'package:chat_app/screens/other_screen.dart';
 import 'package:chat_app/widgets/top_header_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:scoped_model/scoped_model.dart';
 
 class ConversationItem extends StatelessWidget {
   ConversationItem({@required this.conversation});
@@ -42,36 +44,31 @@ class ConversationList extends StatefulWidget {
 
 class _ConversationListState extends State<ConversationList> {
   List<Conversation> conversations;
-  _ConversationListState() {
-    isConversationsReady = false;
-  }
+  _ConversationListState() {}
   @override
   void initState() {
     print('INITITITTITTIT');
-    isConversationsReady = false;
     super.initState();
-    final c = AuthenticationModel(
-        username: 'testflutter@yahoo.fr', password: 'Abc!123');
-    NetHandler netHandler = NetHandler();
-    netHandler
-        .authenticate(c)
-        .then((_) => netHandler.getConversations())
+
+    ScopedModel.of<MessagingModel>(context)
+        .netHandler
+        .getConversations()
         .then((convs) {
       setState(() {
         if (convs != null) {
           conversations = List<Conversation>.from(
               convs.map((element) => element.toConversation()));
-          isConversationsReady = true;
         } else {
-          print('convs returned null for some reason');
+           print('convs returned null for some reason');
         }
       });
     });
+
   }
 
   bool isConversationsReady;
   Widget _buildListViewConversations() {
-    if (isConversationsReady && conversations != null) {
+    if (conversations != null) {
       return ListView(
         padding: EdgeInsets.symmetric(vertical: 8.0),
         children: conversations.map((Conversation conversation) {

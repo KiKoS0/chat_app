@@ -1,3 +1,4 @@
+import 'package:chat_app/models/messaging_model.dart';
 import 'package:chat_app/screens/conversation_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:chat_app/main.dart';
@@ -7,6 +8,8 @@ import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'dart:io';
 import 'dart:convert';
+
+import 'package:scoped_model/scoped_model.dart';
 
 class LoginPage extends StatefulWidget {
   static String tag = 'login-page';
@@ -81,14 +84,22 @@ class _LoginPageState extends State<LoginPage> {
             //             headers: {HttpHeaders.cookieHeader: cookie});
             // print(res.statusCode);
             // print(res.body);
-            final net = NetHandler();
-            await net.authenticate(c);
-            await net.isAuthenticated().then((value) {
+            await ScopedModel.of<MessagingModel>(context).netHandler.authenticate(c).then((value){
               print(value ? "Connected" : "Not Connected");
               if (value) {
                 Navigator.of(context).pushNamed(ConversationScreen.tag);
               }
             });
+
+
+            // final net = NetHandler();
+            // await net.authenticate(c);
+            // await net.isAuthenticated().then((value) {
+            //   print(value ? "Connected" : "Not Connected");
+            //   if (value) {
+            //     Navigator.of(context).pushNamed(ConversationScreen.tag);
+            //   }
+            // });
           }
 
           fetchPost();

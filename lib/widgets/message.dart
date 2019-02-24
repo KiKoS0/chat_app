@@ -2,10 +2,10 @@ import 'dart:async';
 
 import 'package:chat_app/models/conversation_models.dart';
 import 'package:chat_app/models/messages_models.dart';
+import 'package:chat_app/models/messaging_model.dart';
 import 'package:flutter/material.dart';
 import 'package:chat_app/widgets/sendwidget.dart';
-
-
+import 'package:scoped_model/scoped_model.dart';
 
 typedef void MessageHandlingCallback(Message message);
 typedef void MessageSetHandlingCallback(List<Message> messages);
@@ -61,9 +61,8 @@ class MessageItem extends StatelessWidget {
 }
 
 class MessageList extends StatefulWidget {
-  MessageList({Key key, this.messages,this.conversation}) : super(key: key);
+  MessageList({Key key, this.conversation}) : super(key: key);
 
-  List<Message> messages;
   final Conversation conversation;
 
   _MessageListState createState() => _MessageListState();
@@ -71,27 +70,70 @@ class MessageList extends StatefulWidget {
 
 class _MessageListState extends State<MessageList> {
   ScrollController _controller = ScrollController();
+  List<Message> messages;
+  Timer _timer;
 
-  void _handleMessageDelete(Message message) {
+  void _updateMessages() async {
+    print('update');
     setState(() {
-      widget.messages.remove(message);
+      ScopedModel.of<MessagingModel>(context)
+          .netHandler
+          .getMessages(widget.conversation)
+          .then((lst) {
+        _handleGetAllMessages(List<Message>.from(lst.map((e) => e.toMessage(
+            ScopedModel.of<MessagingModel>(context).netHandler.userId))));
+      });
     });
   }
 
-  void _handleGetAllMessages(List<Message> messages){
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
+  }
+
+  void initState() {
+    super.initState();
+    _timer = Timer.periodic(const Duration(milliseconds: 400), (timer) {
+      setState(() {
+        print('update');
+        ScopedModel.of<MessagingModel>(context)
+            .netHandler
+            .getMessages(widget.conversation)
+            .then((lst) {
+          _handleGetAllMessages(List<Message>.from(lst.map((e) => e.toMessage(
+              ScopedModel.of<MessagingModel>(context).netHandler.userId))));
+        }).then((_){
+          // _scrollListToBottom();
+        });
+      });
+    });
+  }
+
+  void _handleMessageDelete(Message message) {
     setState(() {
-      widget.messages = messages;
+      messages.remove(message);
+    });
+  }
+
+  void _handleGetAllMessages(List<Message> msgs) {
+    setState(() {
+      if (messages == null || msgs.length > messages.length) {
+        messages = msgs;
+        _scrollListToBottom();
+      }
     });
   }
 
   void _handleMessageAdd(Message message) {
     print('test');
     setState(() {
-      widget.messages.add(message);
+      messages.add(message);
     });
   }
-  void _handleMessagesClearAll(){
-    widget.messages.clear();
+
+  void _handleMessagesClearAll() {
+    // widget.messages.clear();
   }
 
   void _scrollListToBottom() {
@@ -102,6 +144,24 @@ class _MessageListState extends State<MessageList> {
               duration: const Duration(milliseconds: 150),
               curve: Curves.easeOut));
     });
+  }
+
+  Widget _buildListMessages() {
+    if (messages != null) {
+      return ListView(
+        controller: _controller,
+        padding: EdgeInsets.symmetric(vertical: 8.0),
+        children: messages.map((Message message) {
+          return Container(
+              child: MessageItem(
+                  message: message, onDeleteMessage: _handleMessageDelete));
+        }).toList(),
+      );
+    } else {
+      return Container(
+        child: Center(child: Text("Messages not ready")),
+      );
+    }
   }
 
   @override
@@ -121,21 +181,16 @@ class _MessageListState extends State<MessageList> {
             ),
           ),
           actions: <Widget>[
-            IconButton(icon: Icon(Icons.menu) ,onPressed: null,)
+            IconButton(
+              icon: Icon(Icons.menu),
+              onPressed: null,
+            )
           ],
           title: Text(widget.conversation.others[0]),
         ),
         body: Transform.translate(
           offset: Offset(0.0, -0.0 * MediaQuery.of(context).viewInsets.bottom),
-          child: ListView(
-            controller: _controller,
-            padding: EdgeInsets.symmetric(vertical: 8.0),
-            children: widget.messages.map((Message message) {
-              return Container(
-                  child: MessageItem(
-                      message: message, onDeleteMessage: _handleMessageDelete));
-            }).toList(),
-          ),
+          child: _buildListMessages(),
         ),
         bottomNavigationBar: Transform.translate(
             offset:

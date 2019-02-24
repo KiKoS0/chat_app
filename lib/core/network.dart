@@ -9,6 +9,9 @@ import 'dart:io';
 class NetHandler {
   String _apiCookieKey;
   String get apiCookieKey => _apiCookieKey;
+  String userName;
+  String userId;
+
   Future<bool> authenticate(AuthenticationModel credentials) async {
     try {
       final login = await http.post('http://192.168.1.22:8080/account/login',
@@ -17,11 +20,27 @@ class NetHandler {
           },
           body: json.encode(credentials.toJsonEncodable()));
       _apiCookieKey = login.headers[HttpHeaders.setCookieHeader].split(';')[0];
+      await getInfo();
     } on Exception catch (e) {
       print(e.toString());
       return false;
     }
     return true;
+  }
+
+  Future<void> getInfo() async {
+    final inf = await http.post(
+      'http://192.168.1.22:8080/account/info',
+      headers: {
+        HttpHeaders.contentTypeHeader: "application/json",
+        HttpHeaders.cookieHeader: apiCookieKey
+      },
+    );
+    var decoded = json.decode(inf.body);
+    userId =decoded['ui'];
+    userName = decoded['un'];
+    print(userId);
+    print(userName);
   }
 
   Future<bool> sendMessage(String message, Conversation conv) async {
@@ -38,7 +57,6 @@ class NetHandler {
             HttpHeaders.cookieHeader: apiCookieKey
           },
           body: json.encode(data));
-      print(rep.body);
       print('message ' + rep.statusCode.toString());
       if (rep.statusCode == 200) {
         return true;
@@ -80,13 +98,16 @@ class NetHandler {
 
   Future<List<MessageModel>> getMessages(Conversation conversation) async {
     try {
-      Map data = {'conversationId': conversation.id.toString()};
+      Map data = {'ConversationId': conversation.id.toString()};
+      print("api cookie " + _apiCookieKey);
       final rep = await http.post('http://192.168.1.22:8080/message/get',
           headers: {
             HttpHeaders.contentTypeHeader: "application/json",
             HttpHeaders.cookieHeader: apiCookieKey
           },
           body: json.encode(data));
+
+      print("heyehaeha " + rep.body);
       List<dynamic> decoded = json.decode(rep.body);
       List<MessageModel> ret = List<MessageModel>.from(
           decoded.map((hashMap) => MessageModel.fromJson(hashMap)));
@@ -94,6 +115,7 @@ class NetHandler {
     } on Exception catch (e) {
       print(e.toString());
     }
+    return null;
   }
 
   Future<List<ConversationModel>> getConversations() async {
@@ -109,8 +131,6 @@ class NetHandler {
       List<dynamic> decoded = json.decode(convs.body);
       List<ConversationModel> ret = List<ConversationModel>.from(
           decoded.map((hashMap) => ConversationModel.fromJson(hashMap)));
-      print(ret[0].id);
-      print(ret[0].others);
       return ret;
     } on Exception catch (e) {
       print(e.toString());

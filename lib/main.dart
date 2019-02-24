@@ -1,3 +1,5 @@
+import 'package:chat_app/core/network.dart';
+import 'package:chat_app/models/messaging_model.dart';
 import 'package:chat_app/screens/conversation_screen.dart';
 import 'package:flutter/material.dart';
 // import 'package:chat_app/MyCoolButton.dart';
@@ -6,14 +8,21 @@ import 'package:chat_app/widgets/message.dart';
 import 'package:flutter/rendering.dart';
 import 'package:chat_app/screens/login_page.dart';
 import 'package:chat_app/screens/other_screen.dart';
+import 'package:scoped_model/scoped_model.dart';
 
 void main() {
   // debugPaintSizeEnabled = true;
-  runApp(MyApp());
+  final MessagingModel messagingModel = MessagingModel(netHandler: NetHandler());
+
+  runApp(ScopedModel<MessagingModel>(
+    model:messagingModel,
+    child:MyApp()
+  ));
 }
 
 
 class MyApp extends StatelessWidget {
+
   final routes = <String, WidgetBuilder>{
     LoginPage.tag: (context) => LoginPage(),
     OtherScreen.tag: (context) => OtherScreen(),

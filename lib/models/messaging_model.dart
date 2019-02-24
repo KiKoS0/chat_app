@@ -4,7 +4,7 @@ import 'package:scoped_model/scoped_model.dart';
 import 'package:chat_app/core/network.dart';
 
 class MessagingModel extends Model {
-  MessagingModel({this.network});
+  MessagingModel({this.netHandler});
 
-  final NetHandler network;
+  final NetHandler netHandler;
 }

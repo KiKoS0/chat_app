@@ -1,8 +1,10 @@
 import 'package:chat_app/core/network.dart';
 import 'package:chat_app/models/conversation_models.dart';
 import 'package:chat_app/models/messages_models.dart';
+import 'package:chat_app/models/messaging_model.dart';
 import 'package:flutter/material.dart';
 import 'package:chat_app/widgets/message.dart';
+import 'package:scoped_model/scoped_model.dart';
 
 class MessageSendBox extends StatefulWidget {
   _MessageSendBox createState() => new _MessageSendBox();
@@ -38,23 +40,30 @@ class _MessageSendBox extends State<MessageSendBox> {
   bool _alternate = true;
   void _sendMessage() async {
     setState(() {
-      NetHandler handler = NetHandler();
       // handler.sendMessage(myController.text, widget.conversation).then((value) {
       //   print(value ? "Message sent" : "Message sent");
       // });
       // widget.clearMessagesCallback();
-      final c = AuthenticationModel(
-          username: 'testflutter@yahoo.fr', password: 'Abc!123');
-      handler.authenticate(c).then((_) {
-        handler.sendMessage(myController.text, widget.conversation).then((_) {
-          myController.text = "";
-          handler.getMessages(widget.conversation).then((lst) {
-            widget.setAllMessagesCallback(
-                List<Message>.from(lst.map((e) => e.toMessage('b-b-b-b-b'))));
-            widget.scrollListCallback();
-          });
-        });
+
+      ScopedModel.of<MessagingModel>(context)
+          .netHandler
+          .sendMessage(myController.text, widget.conversation)
+          .then((_) {
+        myController.text = "";
       });
+
+      // final c = AuthenticationModel(
+      //     username: 'testflutter@yahoo.fr', password: 'Abc!123');
+      // handler.authenticate(c).then((_) {
+      //   handler.sendMessage(myController.text, widget.conversation).then((_) {
+      //     myController.text = "";
+      //     handler.getMessages(widget.conversation).then((lst) {
+      //       widget.setAllMessagesCallback(
+      //           List<Message>.from(lst.map((e) => e.toMessage('b-b-b-b-b'))));
+      //       widget.scrollListCallback();
+      //     });
+      //   });
+      // });
       // widget.addMessageCallback(
       //     Message(text: myController.text, isMine: _alternate));
       // _alternate = !_alternate;
@@ -70,6 +79,7 @@ class _MessageSendBox extends State<MessageSendBox> {
               constraints: BoxConstraints(maxHeight: 100.0),
               padding: EdgeInsets.fromLTRB(8.0, 8.0, 5.0, 15.0),
               child: TextField(
+                onTap: widget.scrollListCallback,
                 style: TextStyle(fontSize: 16.0, color: Colors.black),
                 controller: myController,
                 maxLines: null,
