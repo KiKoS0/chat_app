@@ -19,7 +19,7 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final usernameController =
-      TextEditingController(text: 'testflutter@yahoo.fr');
+      TextEditingController(text: 'testflutter@yahoo.com');
   final passwordController = TextEditingController(text: 'Abc!123');
 
   @override

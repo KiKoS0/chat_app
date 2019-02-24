@@ -12,17 +12,13 @@ import 'package:scoped_model/scoped_model.dart';
 
 void main() {
   // debugPaintSizeEnabled = true;
-  final MessagingModel messagingModel = MessagingModel(netHandler: NetHandler());
+  final MessagingModel messagingModel = MessagingModel(
+      netHandler: NetHandler(useHttps: true, useLocalNetwork: false));
 
-  runApp(ScopedModel<MessagingModel>(
-    model:messagingModel,
-    child:MyApp()
-  ));
+  runApp(ScopedModel<MessagingModel>(model: messagingModel, child: MyApp()));
 }
 
-
 class MyApp extends StatelessWidget {
-
   final routes = <String, WidgetBuilder>{
     LoginPage.tag: (context) => LoginPage(),
     OtherScreen.tag: (context) => OtherScreen(),
