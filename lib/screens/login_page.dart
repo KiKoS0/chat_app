@@ -1,5 +1,6 @@
 import 'package:chat_app/models/messaging_model.dart';
 import 'package:chat_app/screens/conversation_screen.dart';
+import 'package:chat_app/screens/search_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:chat_app/main.dart';
 import 'package:chat_app/screens/other_screen.dart';
@@ -19,7 +20,7 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final usernameController =
-      TextEditingController(text: 'testflutter@yahoo.com');
+      TextEditingController(text: 'testflutter@yahoo.fr');
   final passwordController = TextEditingController(text: 'Abc!123');
 
   @override

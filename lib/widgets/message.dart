@@ -94,7 +94,7 @@ class _MessageListState extends State<MessageList> {
 
   void initState() {
     super.initState();
-    _timer = Timer.periodic(const Duration(milliseconds: 400), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
         print('update');
         ScopedModel.of<MessagingModel>(context)

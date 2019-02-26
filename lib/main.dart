@@ -1,6 +1,7 @@
 import 'package:chat_app/core/network.dart';
 import 'package:chat_app/models/messaging_model.dart';
 import 'package:chat_app/screens/conversation_screen.dart';
+import 'package:chat_app/screens/search_screen.dart';
 import 'package:flutter/material.dart';
 // import 'package:chat_app/MyCoolButton.dart';
 // import 'package:chat_app/counter.dart';
@@ -22,7 +23,8 @@ class MyApp extends StatelessWidget {
   final routes = <String, WidgetBuilder>{
     LoginPage.tag: (context) => LoginPage(),
     OtherScreen.tag: (context) => OtherScreen(),
-    ConversationScreen.tag: (context) => ConversationScreen()
+    ConversationScreen.tag: (context) => ConversationScreen(),
+    SearchScreen.tag: (context) => SearchScreen()
   };
   @override
   Widget build(BuildContext context) {

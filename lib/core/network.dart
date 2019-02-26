@@ -1,5 +1,6 @@
 import 'package:chat_app/models/conversation_models.dart';
 import 'package:chat_app/models/messages_models.dart';
+import 'package:chat_app/models/users_model.dart';
 import 'package:chat_app/widgets/message.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
@@ -153,10 +154,49 @@ class NetHandler {
           HttpHeaders.cookieHeader: apiCookieKey
         },
       );
-      print(convs.body);
+      // print(convs.body);
       List<dynamic> decoded = json.decode(convs.body);
       List<ConversationModel> ret = List<ConversationModel>.from(
           decoded.map((hashMap) => ConversationModel.fromJson(hashMap)));
+      return ret;
+    } on Exception catch (e) {
+      print(e.toString());
+    }
+    return null;
+  }
+
+  Future<ConversationModel> createConversation(String id) async {
+    try {
+      Map data = {'ui': id};
+      final conv = await http.post(_getUrl() + 'conversation/create',
+          headers: {
+            HttpHeaders.contentTypeHeader: "application/json",
+            HttpHeaders.cookieHeader: apiCookieKey
+          },
+          body: json.encode(data));
+      print(conv.body);
+      ConversationModel ret =
+          ConversationModel.fromJson(json.decode(conv.body));
+      return ret;
+    } on Exception catch (e) {
+      print(e.toString());
+    }
+    return null;
+  }
+
+  Future<List<UserModel>> getUsers(String username) async {
+    try {
+      Map data = {'username': username};
+      final convs = await http.post(_getUrl() + 'user/search',
+          headers: {
+            HttpHeaders.contentTypeHeader: "application/json",
+            HttpHeaders.cookieHeader: apiCookieKey
+          },
+          body: json.encode(data));
+      print(convs.body);
+      List<dynamic> decoded = json.decode(convs.body);
+      List<UserModel> ret = List<UserModel>.from(
+          decoded.map((hashMap) => UserModel.fromJson(hashMap)));
       return ret;
     } on Exception catch (e) {
       print(e.toString());
