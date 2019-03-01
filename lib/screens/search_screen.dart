@@ -9,6 +9,7 @@ import 'package:chat_app/screens/other_screen.dart';
 import 'package:chat_app/widgets/top_header_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 class UserItem extends StatelessWidget {
@@ -24,13 +25,14 @@ class UserItem extends StatelessWidget {
               icon: Icon(Icons.group_add),
               onPressed: () {
                 ScopedModel.of<MessagingModel>(context)
-                    .netHandler.createConversation(user.id).then((onValue){
-                      if(onValue!=null){
-                        print("created");
-                        Navigator.popAndPushNamed(context, ConversationScreen.tag);
-                      }
-                    });
-                  
+                    .netHandler
+                    .createConversation(user.id)
+                    .then((onValue) {
+                  if (onValue != null) {
+                    print("created");
+                    Navigator.pop(context);
+                  }
+                });
               },
             ),
             leading: CircleAvatar(
@@ -83,14 +85,45 @@ class _UserListState extends State<UserList> {
           return Container(child: UserItem(user: user));
         }).toList(),
       );
+    } else if (_isSearching && searchController.text != "") {
+      return Container(
+          child: Center(
+              child: SpinKitThreeBounce(
+        color: Colors.lightBlueAccent,
+        size: 60.0,
+      )));
     } else {
       return Container(
         child: Center(
-            child: Text(searchController.text != "" ? "No results found" : "")),
+            child: GestureDetector(
+                onLongPress: () {
+                  setState(() {
+                  _isSearching = true;
+                  });
+                  _timer = Timer(Duration(milliseconds: 700), () {
+                    ScopedModel.of<MessagingModel>(context)
+                        .netHandler
+                        .getAllUsers()
+                        .then((us) {
+                      if (us != null) {
+                        users = List<User>.from(
+                            us.map((element) => element.toUser()));
+                      } else {
+                        print('convs returned null for some reason');
+                      }
+                      setState(() {
+                        _isSearching = false;
+                      });
+                    });
+                  });
+                },
+                child: Text(
+                    searchController.text != "" ? "No results found" : ""))),
       );
     }
   }
 
+  bool _isSearching = false;
   void _searchUsers(String str) {
     setState(() {
       if (_timer != null) {
@@ -100,17 +133,19 @@ class _UserListState extends State<UserList> {
         _timer = null;
         users = null;
       } else {
+        _isSearching = true;
         _timer = Timer(Duration(milliseconds: 700), () {
           ScopedModel.of<MessagingModel>(context)
               .netHandler
               .getUsers(str)
               .then((us) {
+            if (us != null) {
+              users = List<User>.from(us.map((element) => element.toUser()));
+            } else {
+              print('convs returned null for some reason');
+            }
             setState(() {
-              if (us != null) {
-                users = List<User>.from(us.map((element) => element.toUser()));
-              } else {
-                print('convs returned null for some reason');
-              }
+              _isSearching = false;
             });
           });
         });
@@ -129,7 +164,7 @@ class _UserListState extends State<UserList> {
           child: TextField(
             onChanged: _searchUsers,
             controller: searchController,
-            style: TextStyle(fontSize: 16.0, color: Colors.black),
+            style: TextStyle(fontSize: 20.0, color: Colors.black),
             maxLines: null,
             keyboardType: TextInputType.multiline,
             decoration: InputDecoration(
@@ -138,7 +173,7 @@ class _UserListState extends State<UserList> {
               contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 0.0),
               border:
                   OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
-              hintText: 'Search user',
+              hintText: 'Username',
             ),
           ),
         ),
@@ -156,19 +191,21 @@ class SearchScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        leading: Hero(
-          tag: 'hero',
-          child: CircleAvatar(
-            backgroundColor: Colors.transparent,
-            radius: 15.0,
-            child: Image.asset('assets/logo.png'),
-          ),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
         ),
         actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.menu),
-            onPressed: null,
-          )
+          Hero(
+            tag: 'hero',
+            child: CircleAvatar(
+              backgroundColor: Colors.transparent,
+              radius: 30.0,
+              child: Image.asset('assets/logo.png'),
+            ),
+          ),
         ],
         title: Text('Add User'),
       ),

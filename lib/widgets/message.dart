@@ -5,6 +5,7 @@ import 'package:chat_app/models/messages_models.dart';
 import 'package:chat_app/models/messaging_model.dart';
 import 'package:flutter/material.dart';
 import 'package:chat_app/widgets/sendwidget.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 typedef void MessageHandlingCallback(Message message);
@@ -159,7 +160,11 @@ class _MessageListState extends State<MessageList> {
       );
     } else {
       return Container(
-        child: Center(child: Text("Messages not ready")),
+        child: Center(
+            child: SpinKitFadingCube (
+          color: Colors.lightBlueAccent,
+          size: 60.0,
+        )),
       );
     }
   }

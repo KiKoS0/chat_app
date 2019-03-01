@@ -6,6 +6,7 @@ import 'package:chat_app/screens/search_screen.dart';
 import 'package:chat_app/widgets/top_header_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 class ConversationItem extends StatelessWidget {
@@ -77,7 +78,11 @@ class _ConversationListState extends State<ConversationList> {
       );
     } else {
       return Container(
-        child: Center(child: Text("Messages not ready")),
+        child: Center(
+            child: SpinKitRotatingCircle(
+          color: Colors.lightBlueAccent,
+          size: 60.0,
+        )),
       );
     }
   }
@@ -129,7 +134,17 @@ class ConversationScreen extends StatelessWidget {
                   return choices.map((ConversationMenuChoice choice) {
                     return PopupMenuItem<ConversationMenuChoice>(
                       value: choice,
-                      child: Text(choice.title),
+                      child: Row(
+                        children: <Widget>[
+                          Container(
+                            child: choice.icon ?? Container(),
+                            margin: EdgeInsets.only(right: 10.0, left: 0.0),
+                          ),
+                          Expanded(
+                            child: Text(choice.title),
+                          ),
+                        ],
+                      ),
                     );
                   }).toList();
                 },
@@ -142,6 +157,15 @@ class ConversationScreen extends StatelessWidget {
             title: Text('My Messages'),
           ),
           body: ConversationList(),
+          floatingActionButton: FloatingActionButton(
+            child: Icon(
+              Icons.add,
+              color: Colors.white,
+            ),
+            onPressed: () {
+              Navigator.of(context).pushNamed(SearchScreen.tag);
+            },
+          ),
         ));
   }
 }
@@ -149,19 +173,27 @@ class ConversationScreen extends StatelessWidget {
 void _addCallback(BuildContext context) {
   Navigator.of(context).pushNamed(SearchScreen.tag);
 }
+
 void _disconnectCallback(BuildContext context) {
+  ScopedModel.of<MessagingModel>(context).netHandler.logout();
   Navigator.pop(context);
 }
 
 const List<ConversationMenuChoice> choices = const <ConversationMenuChoice>[
-  const ConversationMenuChoice(title: 'Add', choiceCallback: _addCallback),
-  const ConversationMenuChoice(title: 'Disconnect' , choiceCallback: _disconnectCallback)
+  const ConversationMenuChoice(
+      title: 'Disconnect',
+      choiceCallback: _disconnectCallback,
+      icon: Icon(
+        Icons.lock_outline,
+        color: Colors.lightBlueAccent,
+      ))
 ];
 
 typedef void ChoiceCallback(BuildContext message);
 
 class ConversationMenuChoice {
   final String title;
+  final Icon icon;
   final ChoiceCallback choiceCallback;
-  const ConversationMenuChoice({this.title, this.choiceCallback});
+  const ConversationMenuChoice({this.title, this.choiceCallback, this.icon});
 }

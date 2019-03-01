@@ -37,36 +37,14 @@ class _MessageSendBox extends State<MessageSendBox> {
     });
   }
 
-  bool _alternate = true;
   void _sendMessage() async {
     setState(() {
-      // handler.sendMessage(myController.text, widget.conversation).then((value) {
-      //   print(value ? "Message sent" : "Message sent");
-      // });
-      // widget.clearMessagesCallback();
-
       ScopedModel.of<MessagingModel>(context)
           .netHandler
           .sendMessage(myController.text, widget.conversation)
           .then((_) {
         myController.text = "";
       });
-
-      // final c = AuthenticationModel(
-      //     username: 'testflutter@yahoo.fr', password: 'Abc!123');
-      // handler.authenticate(c).then((_) {
-      //   handler.sendMessage(myController.text, widget.conversation).then((_) {
-      //     myController.text = "";
-      //     handler.getMessages(widget.conversation).then((lst) {
-      //       widget.setAllMessagesCallback(
-      //           List<Message>.from(lst.map((e) => e.toMessage('b-b-b-b-b'))));
-      //       widget.scrollListCallback();
-      //     });
-      //   });
-      // });
-      // widget.addMessageCallback(
-      //     Message(text: myController.text, isMine: _alternate));
-      // _alternate = !_alternate;
     });
   }
 
@@ -80,7 +58,7 @@ class _MessageSendBox extends State<MessageSendBox> {
               padding: EdgeInsets.fromLTRB(8.0, 8.0, 5.0, 15.0),
               child: TextField(
                 onTap: widget.scrollListCallback,
-                style: TextStyle(fontSize: 16.0, color: Colors.black),
+                style: TextStyle(fontSize: 20.0, color: Colors.black),
                 controller: myController,
                 maxLines: null,
                 keyboardType: TextInputType.multiline,
@@ -90,7 +68,7 @@ class _MessageSendBox extends State<MessageSendBox> {
                   contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 0.0),
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(32.0)),
-                  hintText: 'Send message',
+                  hintText: 'Aa',
                 ),
               )),
         ),

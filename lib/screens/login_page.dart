@@ -9,7 +9,7 @@ import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'dart:io';
 import 'dart:convert';
-
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 class LoginPage extends StatefulWidget {
@@ -22,9 +22,31 @@ class _LoginPageState extends State<LoginPage> {
   final usernameController =
       TextEditingController(text: 'testflutter@yahoo.fr');
   final passwordController = TextEditingController(text: 'Abc!123');
-
+  bool isLoggingIn = false;
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    setState(() {
+      isLoggingIn = true;
+    });
+    ScopedModel.of<MessagingModel>(context)
+        .netHandler
+        .initialize()
+        .then((value) {
+      print(value ? "Connected" : "Not Connected");
+      if (value) {
+        Navigator.of(context).pushNamed(ConversationScreen.tag);
+        isLoggingIn = false;
+      } else {
+        setState(() {
+          isLoggingIn = false;
+        });
+      }
+    });
+  }
+
+  Widget _buildLoginPage() {
     final logo = Hero(
       tag: 'hero',
       child: CircleAvatar(
@@ -63,48 +85,30 @@ class _LoginPageState extends State<LoginPage> {
           borderRadius: BorderRadius.circular(24),
         ),
         onPressed: () async {
-          //  Navigator.of(context).pushNamed(OtherScreen.tag);
           Future<http.Response> fetchPost() async {
-            // Map cred = {
-            //   'email' : 'testflutter@yahoo.fr',
-            //   'password' : 'Abc!123'
-            // };
-            // final rep = await http.post('http://192.168.1.22:8080/account/register',
-            //                   headers: {HttpHeaders.contentTypeHeader: "application/json",},
-            //                   body: json.encode(cred));
             final c = AuthenticationModel(
                 username: usernameController.text,
                 password: passwordController.text);
-            // final login = await http.post('http://192.168.1.22:8080/account/login',
-            //                   headers: {HttpHeaders.contentTypeHeader: "application/json",},
-            //                   body: json.encode(c.toJsonEncodable()));
-            // print(login.statusCode);
-            // final cookie = login.headers[HttpHeaders.setCookieHeader].split(';')[0];
-            // print(cookie);
-            // final res = await http.get('http://192.168.1.22:8080/api/protected',
-            //             headers: {HttpHeaders.cookieHeader: cookie});
-            // print(res.statusCode);
-            // print(res.body);
-            await ScopedModel.of<MessagingModel>(context).netHandler.authenticate(c).then((value){
+            await ScopedModel.of<MessagingModel>(context)
+                .netHandler
+                .authenticate(c)
+                .then((value) {
               print(value ? "Connected" : "Not Connected");
               if (value) {
                 Navigator.of(context).pushNamed(ConversationScreen.tag);
+                isLoggingIn = false;
+              } else {
+                setState(() {
+                  isLoggingIn = false;
+                });
               }
             });
-
-
-            // final net = NetHandler();
-            // await net.authenticate(c);
-            // await net.isAuthenticated().then((value) {
-            //   print(value ? "Connected" : "Not Connected");
-            //   if (value) {
-            //     Navigator.of(context).pushNamed(ConversationScreen.tag);
-            //   }
-            // });
           }
 
+          setState(() {
+            isLoggingIn = true;
+          });
           fetchPost();
-
         },
         padding: EdgeInsets.all(12),
         color: Colors.lightBlueAccent,
@@ -145,5 +149,21 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (isLoggingIn) {
+      return Scaffold(
+        backgroundColor: Colors.white,
+        body: Center(
+            child: SpinKitCubeGrid(
+          color: Colors.lightBlueAccent,
+          size: 100.0,
+        )),
+      );
+    } else {
+      return _buildLoginPage();
+    }
   }
 }
