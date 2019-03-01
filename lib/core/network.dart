@@ -68,9 +68,9 @@ class NetHandler {
     return response.statusCode == 200;
   }
 
-  Future<bool> authenticate(AuthenticationModel credentials) async {
+  Future<bool> authenticate(AuthenticationModel credentials,bool isLogin) async {
     try {
-      String test = _getUrl() + 'account/login';
+      String test = _getUrl() + 'account/'+ (isLogin ? 'login' : 'register');
       print(test);
       final login = await http.post(test,
           headers: {

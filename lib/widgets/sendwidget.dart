@@ -57,6 +57,7 @@ class _MessageSendBox extends State<MessageSendBox> {
               constraints: BoxConstraints(maxHeight: 100.0),
               padding: EdgeInsets.fromLTRB(8.0, 8.0, 5.0, 15.0),
               child: TextField(
+                textCapitalization: TextCapitalization.sentences,
                 onTap: widget.scrollListCallback,
                 style: TextStyle(fontSize: 20.0, color: Colors.black),
                 controller: myController,

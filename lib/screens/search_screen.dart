@@ -31,6 +31,7 @@ class UserItem extends StatelessWidget {
                   if (onValue != null) {
                     print("created");
                     Navigator.pop(context);
+                    Navigator.popAndPushNamed(context,ConversationScreen.tag);
                   }
                 });
               },
@@ -165,8 +166,6 @@ class _UserListState extends State<UserList> {
             onChanged: _searchUsers,
             controller: searchController,
             style: TextStyle(fontSize: 20.0, color: Colors.black),
-            maxLines: null,
-            keyboardType: TextInputType.multiline,
             decoration: InputDecoration(
               filled: true,
               fillColor: Colors.white,
