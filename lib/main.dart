@@ -1,47 +1,76 @@
+import 'package:chat_app/core/network.dart';
+import 'package:chat_app/models/messaging_model.dart';
+import 'package:chat_app/screens/conversation_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:chat_app/MyCoolButton.dart';
-import 'package:chat_app/counter.dart';
-import 'package:chat_app/message.dart';
+// import 'package:chat_app/MyCoolButton.dart';
+// import 'package:chat_app/counter.dart';
+import 'package:chat_app/widgets/message.dart';
 import 'package:flutter/rendering.dart';
-void main() {
-     debugPaintSizeEnabled = true;
-  runApp(MaterialApp(
-    title: 'Messages',
-    home: MessageList(
-      messages: <Message>[],
-    ),
-  ));
+import 'package:chat_app/screens/login_page.dart';
+import 'package:chat_app/screens/other_screen.dart';
+import 'package:scoped_model/scoped_model.dart';
 
+void main() {
+  // debugPaintSizeEnabled = true;
+  final MessagingModel messagingModel = MessagingModel(netHandler: NetHandler());
+
+  runApp(ScopedModel<MessagingModel>(
+    model:messagingModel,
+    child:MyApp()
+  ));
 }
 
-class TestHome extends StatelessWidget {
+
+class MyApp extends StatelessWidget {
+
+  final routes = <String, WidgetBuilder>{
+    LoginPage.tag: (context) => LoginPage(),
+    OtherScreen.tag: (context) => OtherScreen(),
+    ConversationScreen.tag: (context) => ConversationScreen()
+  };
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-          leading: IconButton(
-            icon: Icon(Icons.menu),
-            tooltip: 'Navigation menu',
-            onPressed: null,
-          ),
-          title: Text('Example Title'),
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.search),
-              tooltip: 'Search',
-              onPressed: null,
-            )
-          ]),
-      body: Center(
-        child: Column(
-          children: <Widget>[MyCoolButton(), Counter()],
-        ),
+    return MaterialApp(
+      title: 'KNetwork',
+      //debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        primarySwatch: Colors.lightBlue,
+        // fontFamily: 'Nunito',
       ),
-      floatingActionButton: FloatingActionButton(
-        tooltip: 'Add',
-        child: Icon(Icons.message),
-        onPressed: null,
-      ),
+      home: LoginPage(),
+      routes: routes,
     );
   }
 }
+
+// class TestHome extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//           leading: IconButton(
+//             icon: Icon(Icons.menu),
+//             tooltip: 'Navigation menu',
+//             onPressed: null,
+//           ),
+//           title: Text('Example Title'),
+//           actions: <Widget>[
+//             IconButton(
+//               icon: Icon(Icons.search),
+//               tooltip: 'Search',
+//               onPressed: null,
+//             )
+//           ]),
+//       body: Center(
+//         child: Column(
+//           children: <Widget>[MyCoolButton(), Counter()],
+//         ),
+//       ),
+//       floatingActionButton: FloatingActionButton(
+//         tooltip: 'Add',
+//         child: Icon(Icons.message),
+//         onPressed: null,
+//       ),
+//     );
+//   }
+// }
